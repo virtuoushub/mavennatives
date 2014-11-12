@@ -89,7 +89,6 @@ public class CopyNativesMojo extends AbstractMojo {
       for (Artifact artifact : artifacts) {
         String classifier = artifact.getClassifier();
         if (classifier != null && classifier.startsWith("natives-")) {
-
           String platform = classifier.substring("natives-".length());
           if (platformsActive && (!platforms.contains(platform))) {
             getLog().debug(String.format("Skipping other platform: G:%s - A:%s - C:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier()));
