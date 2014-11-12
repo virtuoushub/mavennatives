@@ -74,13 +74,15 @@ public class CopyNativesMojo extends AbstractMojo {
   public void execute() throws MojoExecutionException, MojoFailureException {
     try {
       getLog().info("Saving natives in " + nativesTargetDir);
-      if (separateDirs)
+      if (separateDirs) {
         getLog().info("Storing artifacts in separate dirs according to classifier");
+      }
       final boolean platformsActive = platforms != null && (!platforms.isEmpty());
-      if (platformsActive)
+      if (platformsActive) {
         getLog().info(String.format("Only copying the following platforms: %s", platforms));
-      else
+      } else {
         getLog().info("Copying all platforms.");
+      }
       Set<Artifact> artifacts = project.getArtifacts();
       nativesTargetDir.mkdirs();
       getLog().debug(String.format("Using "));
