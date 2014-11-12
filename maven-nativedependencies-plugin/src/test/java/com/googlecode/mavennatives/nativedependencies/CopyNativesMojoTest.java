@@ -2,6 +2,7 @@ package com.googlecode.mavennatives.nativedependencies;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -113,4 +114,40 @@ public class CopyNativesMojoTest
 		mojo.execute();
 	}
 
+	@Test
+	public void executeWithPlatformsSpecifiedNativeDependenciesCallsTheUnpacker() throws MojoExecutionException, MojoFailureException, IOException
+	{
+		mojo.setPlatforms(Arrays.asList("windows", "linux"));
+		final Set<Artifact> artifacts = new HashSet<Artifact>();
+			
+		artifacts.add(artifactFactory.createArtifact("groupid1","artifactid1","1.0"));
+		Artifact nativeArtifact = artifactFactory.createArtifact("groupid2","artifactid2","2.0","compile","jar","natives-windows");
+		final File nativeFile = new File("test1");
+		nativeArtifact.setFile(nativeFile);
+		artifacts.add(nativeArtifact);
+
+		Artifact nativeArtifact2 = artifactFactory.createArtifact("groupid2","artifactid2","2.0","compile","jar","natives-mac");
+		final File nativeFile2 = new File("test2");
+		nativeArtifact2.setFile(nativeFile2);
+		artifacts.add(nativeArtifact2);
+
+		Artifact nativeArtifact3 = artifactFactory.createArtifact("groupid2","artifactid2","2.0","compile","jar","natives-linux");
+		final File nativeFile3 = new File("test3");
+		nativeArtifact3.setFile(nativeFile3);
+		artifacts.add(nativeArtifact3);
+
+		artifacts.add(artifactFactory.createArtifact("groupid3","artifactid3","3.0"));
+		
+		context.checking(new Expectations()
+		{
+			{
+				oneOf(nativesTargetDir).mkdirs();
+				oneOf(mavenProject).getArtifacts();will(returnValue(artifacts));
+				oneOf(jarUnpacker).copyJarContent(nativeFile, nativesTargetDir);
+				oneOf(jarUnpacker).copyJarContent(nativeFile3, nativesTargetDir);
+			}
+		});
+		
+		mojo.execute();
+	}	
 }

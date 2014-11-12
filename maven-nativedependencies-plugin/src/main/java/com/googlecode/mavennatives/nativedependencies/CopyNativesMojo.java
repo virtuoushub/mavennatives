@@ -17,6 +17,7 @@ package com.googlecode.mavennatives.nativedependencies;
  */
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -56,6 +57,11 @@ public class CopyNativesMojo extends AbstractMojo {
 	private boolean separateDirs;
 
 	/**
+	 * @parameter expression="${platforms}"
+	 */
+	private List<String> platforms;
+
+	/**
 	 * @component
 	 */
 	private IJarUnpacker jarUnpacker;
@@ -70,17 +76,27 @@ public class CopyNativesMojo extends AbstractMojo {
 			getLog().info("Saving natives in " + nativesTargetDir);
 			if (separateDirs)
 				getLog().info("Storing artifacts in separate dirs according to classifier");
+			final boolean platformsActive = platforms != null && (!platforms.isEmpty());
+			if (platformsActive)
+				getLog().info(String.format("Only copying the following platforms: %s", platforms));
+			else
+				getLog().info("Copying all platforms.");
 			Set<Artifact> artifacts = project.getArtifacts();
 			nativesTargetDir.mkdirs();
+			getLog().debug(String.format("Using "));
 			for (Artifact artifact : artifacts) {
 				String classifier = artifact.getClassifier();
 				if (classifier != null && classifier.startsWith("natives-")) {
-
+					
+					String platform = classifier.substring("natives-".length());
+					if (platformsActive && (!platforms.contains(platform))) {
+						getLog().debug(String.format("Skipping other platform: G:%s - A:%s - C:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier()));
+						continue;
+					}
 					getLog().info(String.format("G:%s - A:%s - C:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier()));
 					File artifactDir = nativesTargetDir;
 					if (separateDirs) {
-						String suffix = classifier.substring("natives-".length());
-						artifactDir = new File(nativesTargetDir, suffix);
+						artifactDir = new File(nativesTargetDir, platform);
 						artifactDir.mkdirs();
 					}
 					jarUnpacker.copyJarContent(artifact.getFile(), artifactDir);
@@ -109,4 +125,11 @@ public class CopyNativesMojo extends AbstractMojo {
 		this.buildContext = buildContext;
 	}
 
+	public List<String> getPlatforms() {
+		return platforms;
+	}
+
+	public void setPlatforms(List<String> platforms) {
+		this.platforms = platforms;
+	}
 }
