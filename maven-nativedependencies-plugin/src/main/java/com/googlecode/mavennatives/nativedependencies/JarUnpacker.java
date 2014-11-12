@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -18,6 +20,8 @@ public class JarUnpacker implements IJarUnpacker
 {
   private Log log = new SystemStreamLog();
 
+  private static final List<String> IGNORED_FILES = new ArrayList<String>(){{ add("META-INF"); add("MANIFEST.MF"); }};
+
   public void copyJarContent(File jarPath, File targetDir) throws IOException
   {
     log.info("Copying natives from " + jarPath.getName());
@@ -26,36 +30,37 @@ public class JarUnpacker implements IJarUnpacker
     Enumeration<JarEntry> entries = jar.entries();
     while (entries.hasMoreElements())
     {
-      JarEntry file = entries.nextElement();
+      final JarEntry file = entries.nextElement();
 
-      File f = new File(targetDir, file.getName());
+      final File f = new File(targetDir, file.getName());
+      if(!IGNORED_FILES.contains(f.getName())) {
+        log.info("Copying native - " + file.getName());
 
-      log.info("Copying native - " + file.getName());
+        final File parentFile = f.getParentFile();
+        parentFile.mkdirs();
 
-      File parentFile = f.getParentFile();
-      parentFile.mkdirs();
+        if (file.isDirectory())
+        { // if its a directory, create it
+          f.mkdir();
+          continue;
+        }
 
-      if (file.isDirectory())
-      { // if its a directory, create it
-        f.mkdir();
-        continue;
-      }
+        InputStream is = null;
+        FileOutputStream fos = null;
 
-      InputStream is = null;
-      FileOutputStream fos = null;
-
-      try
-      {
-        is = jar.getInputStream(file); // get the input stream
-        fos = new FileOutputStream(f);
-        IOUtils.copy(is, fos);
-      }
-      finally
-      {
-        if (fos != null)
-          fos.close();
-        if (is != null)
-          is.close();
+        try
+        {
+          is = jar.getInputStream(file); // get the input stream
+          fos = new FileOutputStream(f);
+          IOUtils.copy(is, fos);
+        }
+        finally
+        {
+          if (fos != null)
+            fos.close();
+          if (is != null)
+            is.close();
+        }
       }
 
     }
