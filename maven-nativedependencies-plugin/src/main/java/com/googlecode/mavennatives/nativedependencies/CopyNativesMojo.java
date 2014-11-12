@@ -29,107 +29,107 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Unpacks native dependencies
- * 
+ *
  * @goal copy
  * @phase package
  * @requiresProject true
  * @requiresDependencyResolution test
  */
 public class CopyNativesMojo extends AbstractMojo {
-	/**
-	 * POM
-	 * 
-	 * @parameter expression="${project}"
-	 * @readonly
-	 * @required
-	 */
-	private MavenProject project;
+  /**
+   * POM
+   *
+   * @parameter expression="${project}"
+   * @readonly
+   * @required
+   */
+  private MavenProject project;
 
-	/**
-	 * 
-	 * @parameter expression="${nativesTargetDir}" default-value="${project.build.directory}/natives"
-	 */
-	private File nativesTargetDir;
+  /**
+   *
+   * @parameter expression="${nativesTargetDir}" default-value="${project.build.directory}/natives"
+   */
+  private File nativesTargetDir;
 
-	/**
-	 * @parameter expression="${separateDirs}" default-value="false"
-	 */
-	private boolean separateDirs;
+  /**
+   * @parameter expression="${separateDirs}" default-value="false"
+   */
+  private boolean separateDirs;
 
-	/**
-	 * @parameter expression="${platforms}"
-	 */
-	private List<String> platforms;
+  /**
+   * @parameter expression="${platforms}"
+   */
+  private List<String> platforms;
 
-	/**
-	 * @component
-	 */
-	private IJarUnpacker jarUnpacker;
+  /**
+   * @component
+   */
+  private IJarUnpacker jarUnpacker;
 
-	/** 
-	 * @component 
-	 * */
-	private BuildContext buildContext;
+  /**
+   * @component
+   * */
+  private BuildContext buildContext;
 
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		try {
-			getLog().info("Saving natives in " + nativesTargetDir);
-			if (separateDirs)
-				getLog().info("Storing artifacts in separate dirs according to classifier");
-			final boolean platformsActive = platforms != null && (!platforms.isEmpty());
-			if (platformsActive)
-				getLog().info(String.format("Only copying the following platforms: %s", platforms));
-			else
-				getLog().info("Copying all platforms.");
-			Set<Artifact> artifacts = project.getArtifacts();
-			nativesTargetDir.mkdirs();
-			getLog().debug(String.format("Using "));
-			for (Artifact artifact : artifacts) {
-				String classifier = artifact.getClassifier();
-				if (classifier != null && classifier.startsWith("natives-")) {
-					
-					String platform = classifier.substring("natives-".length());
-					if (platformsActive && (!platforms.contains(platform))) {
-						getLog().debug(String.format("Skipping other platform: G:%s - A:%s - C:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier()));
-						continue;
-					}
-					getLog().info(String.format("G:%s - A:%s - C:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier()));
-					File artifactDir = nativesTargetDir;
-					if (separateDirs) {
-						artifactDir = new File(nativesTargetDir, platform);
-						artifactDir.mkdirs();
-					}
-					jarUnpacker.copyJarContent(artifact.getFile(), artifactDir);
-				}
+  public void execute() throws MojoExecutionException, MojoFailureException {
+    try {
+      getLog().info("Saving natives in " + nativesTargetDir);
+      if (separateDirs)
+        getLog().info("Storing artifacts in separate dirs according to classifier");
+      final boolean platformsActive = platforms != null && (!platforms.isEmpty());
+      if (platformsActive)
+        getLog().info(String.format("Only copying the following platforms: %s", platforms));
+      else
+        getLog().info("Copying all platforms.");
+      Set<Artifact> artifacts = project.getArtifacts();
+      nativesTargetDir.mkdirs();
+      getLog().debug(String.format("Using "));
+      for (Artifact artifact : artifacts) {
+        String classifier = artifact.getClassifier();
+        if (classifier != null && classifier.startsWith("natives-")) {
 
-			}
-			buildContext.refresh(nativesTargetDir);
-		} catch (Exception e) {
-			throw new MojoFailureException("Unable to copy natives", e);
-		}
-	}
+          String platform = classifier.substring("natives-".length());
+          if (platformsActive && (!platforms.contains(platform))) {
+            getLog().debug(String.format("Skipping other platform: G:%s - A:%s - C:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier()));
+            continue;
+          }
+          getLog().info(String.format("G:%s - A:%s - C:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier()));
+          File artifactDir = nativesTargetDir;
+          if (separateDirs) {
+            artifactDir = new File(nativesTargetDir, platform);
+            artifactDir.mkdirs();
+          }
+          jarUnpacker.copyJarContent(artifact.getFile(), artifactDir);
+        }
 
-	public void setMavenProject(MavenProject mavenProject) {
-		this.project = mavenProject;
-	}
+      }
+      buildContext.refresh(nativesTargetDir);
+    } catch (Exception e) {
+      throw new MojoFailureException("Unable to copy natives", e);
+    }
+  }
 
-	public void setNativesTargetDir(File nativesTargetDir2) {
-		this.nativesTargetDir = nativesTargetDir2;
-	}
+  public void setMavenProject(MavenProject mavenProject) {
+    this.project = mavenProject;
+  }
 
-	public void setJarUnpacker(IJarUnpacker jarUnpacker) {
-		this.jarUnpacker = jarUnpacker;
-	}
-	
-	public void setBuildContext(BuildContext buildContext) {
-		this.buildContext = buildContext;
-	}
+  public void setNativesTargetDir(File nativesTargetDir2) {
+    this.nativesTargetDir = nativesTargetDir2;
+  }
 
-	public List<String> getPlatforms() {
-		return platforms;
-	}
+  public void setJarUnpacker(IJarUnpacker jarUnpacker) {
+    this.jarUnpacker = jarUnpacker;
+  }
 
-	public void setPlatforms(List<String> platforms) {
-		this.platforms = platforms;
-	}
+  public void setBuildContext(BuildContext buildContext) {
+    this.buildContext = buildContext;
+  }
+
+  public List<String> getPlatforms() {
+    return platforms;
+  }
+
+  public void setPlatforms(List<String> platforms) {
+    this.platforms = platforms;
+  }
 }
