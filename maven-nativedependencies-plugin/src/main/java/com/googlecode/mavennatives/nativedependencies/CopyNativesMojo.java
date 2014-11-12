@@ -83,7 +83,7 @@ public class CopyNativesMojo extends AbstractMojo {
       } else {
         getLog().info("Copying all platforms.");
       }
-      Set<Artifact> artifacts = project.getArtifacts();
+      final Set<Artifact> artifacts = project.getArtifacts();
       nativesTargetDir.mkdirs();
       getLog().debug(String.format("Using "));
       for (Artifact artifact : artifacts) {
