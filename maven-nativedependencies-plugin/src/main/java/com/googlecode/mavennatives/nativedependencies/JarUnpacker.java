@@ -16,50 +16,50 @@ import org.codehaus.plexus.component.annotations.Component;
 @Component(role = IJarUnpacker.class)
 public class JarUnpacker implements IJarUnpacker
 {
-	private Log log = new SystemStreamLog();
+  private Log log = new SystemStreamLog();
 
-	public void copyJarContent(File jarPath, File targetDir) throws IOException
-	{
-		log.info("Copying natives from " + jarPath.getName());
-		JarFile jar = new JarFile(jarPath);
+  public void copyJarContent(File jarPath, File targetDir) throws IOException
+  {
+    log.info("Copying natives from " + jarPath.getName());
+    JarFile jar = new JarFile(jarPath);
 
-		Enumeration<JarEntry> entries = jar.entries();
-		while (entries.hasMoreElements())
-		{
-			JarEntry file = entries.nextElement();
+    Enumeration<JarEntry> entries = jar.entries();
+    while (entries.hasMoreElements())
+    {
+      JarEntry file = entries.nextElement();
 
-			File f = new File(targetDir, file.getName());
+      File f = new File(targetDir, file.getName());
 
-			log.info("Copying native - " + file.getName());
-			
-			File parentFile = f.getParentFile();
-			parentFile.mkdirs();
-			
-			if (file.isDirectory())
-			{ // if its a directory, create it
-				f.mkdir();
-				continue;
-			}
+      log.info("Copying native - " + file.getName());
 
-			InputStream is = null;
-			FileOutputStream fos = null;
+      File parentFile = f.getParentFile();
+      parentFile.mkdirs();
 
-			try
-			{
-				is = jar.getInputStream(file); // get the input stream
-				fos = new FileOutputStream(f);
-				IOUtils.copy(is, fos);
-			}
-			finally
-			{
-				if (fos != null)
-					fos.close();
-				if (is != null)
-					is.close();
-			}
+      if (file.isDirectory())
+      { // if its a directory, create it
+        f.mkdir();
+        continue;
+      }
 
-		}
+      InputStream is = null;
+      FileOutputStream fos = null;
 
-	}
+      try
+      {
+        is = jar.getInputStream(file); // get the input stream
+        fos = new FileOutputStream(f);
+        IOUtils.copy(is, fos);
+      }
+      finally
+      {
+        if (fos != null)
+          fos.close();
+        if (is != null)
+          is.close();
+      }
+
+    }
+
+  }
 
 }
