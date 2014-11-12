@@ -181,6 +181,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
+            <version>1.9</version>
             <configuration>
               <cloneAllFiles>true</cloneAllFiles>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
