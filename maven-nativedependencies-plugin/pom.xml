@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.googlecode.mavennatives</groupId>
+  <groupId>com.colapietro.maven.plugins</groupId>
   <artifactId>maven-nativedependencies-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>0.0.8-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
   <name>Maven Native Dependencies Plugin</name>
   <description>This plugin allows the automatic unpacking of natives in jars depending on a classifier with a certain pattern</description>
-  <url>http://code.google.com/p/mavennatives/</url>
+  <url>https://github.com/virtuoushub/mavennatives/</url>
   <developers>
     <developer>
       <id>rgarat</id>
@@ -20,11 +20,16 @@
       <organization>Gemserk</organization>
       <url>http://blog.gemserk.com</url>
     </developer>
+    <developer>
+      <id>pc</id>
+      <email>petercolapietro@gmail.com</email>
+      <url>https://github.com/virtuoushub</url>
+    </developer>
   </developers>
 
   <issueManagement>
-    <system>googlecode</system>
-    <url>http://code.google.com/p/mavennatives/issues/list</url>
+    <system>github</system>
+    <url>https://github.com/virtuoushub/mavennatives/issues</url>
   </issueManagement>
 
   <licenses>
@@ -36,10 +41,11 @@
   </licenses>
 
   <scm>
-    <url>https://mavennatives.googlecode.com/svn/trunk/maven-nativedependencies-plugin</url>
-    <connection>scm:svn:http://mavennatives.googlecode.com/svn/trunk/maven-nativedependencies-plugin</connection>
-    <developerConnection>scm:svn:https://mavennatives.googlecode.com/svn/trunk/maven-nativedependencies-plugin</developerConnection>
+    <url>https://github.com/virtuoushub/mavennatives</url>
+    <connection>scm:git:git://github.com/virtuoushub/mavennatives.git</connection>
+    <developerConnection>scm:git:git@github.com:virtuoushub/mavennatives.git</developerConnection>
   </scm>
+
   <distributionManagement>
     <snapshotRepository>
       <id>sonatype-nexus-snapshots</id>
@@ -102,9 +108,6 @@
             <goals>
               <goal>jar-no-fork</goal>
             </goals>
-            <configuration>
-							<encoding>${project.build.sourceEncoding}</encoding>
-            </configuration>
           </execution>
         </executions>
       </plugin>
