@@ -57,7 +57,7 @@ public class CopyNativesMojo extends AbstractMojo {
 	private boolean separateDirs;
 
   /**
-   * @parameter expression="${platforms}"
+   * @parameter platforms="platforms"
    */
   private List<String> platforms;
 
