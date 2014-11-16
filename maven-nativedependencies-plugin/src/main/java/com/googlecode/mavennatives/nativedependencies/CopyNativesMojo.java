@@ -16,7 +16,7 @@ package com.googlecode.mavennatives.nativedependencies;
  * limitations under the License.
  */
 
-import java.io.File;
+import java.io.*;
 import java.util.List;
 import java.util.Set;
 
@@ -24,54 +24,46 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Unpacks native dependencies
- *
- * @goal copy
- * @phase package
- * @requiresProject true
- * @requiresDependencyResolution test
  */
+@Mojo(name = "copy", requiresProject = true, requiresDependencyResolution = ResolutionScope.TEST, defaultPhase = LifecyclePhase.PACKAGE)
 final class CopyNativesMojo extends AbstractMojo {
-	/**
-	 * POM
-	 * 
-	 * @parameter project="project"
-	 * @readonly
-	 * @required
-	 */
+
+    @Parameter( defaultValue = "${project}", readonly = true, required = true)
 	private MavenProject project;
 
-	/**
-	 * 
-	 * @parameter nativesTargetDir="nativesTargetDir" default-value="${project.build.directory}/natives"
-	 */
+    @Parameter(defaultValue = "${project.build.directory}/natives")
 	private File nativesTargetDir;
 
-	/**
-	 * @parameter separateDirs="separateDirs" default-value="false"
-	 */
+    @Parameter(defaultValue = "false")
 	private boolean separateDirs;
 
-  /**
-   * @parameter platforms="platforms"
-   */
+  @Parameter
   private List<String> platforms;
 
   /**
    * @component
    */
+  @Component
   private IJarUnpacker jarUnpacker;
 
   /**
    * @component
-   * */
+   */
+  @Component
   private BuildContext buildContext;
 
-  /**
+  private static final Log LOG = new SystemStreamLog();
+
+
+    /**
    *
    * Type erasure in <code>final Set<Artifact> artifacts = project.getArtifacts();</code> is the reasons for @SuppressWarnings("unchecked")
    *
@@ -94,9 +86,11 @@ final class CopyNativesMojo extends AbstractMojo {
           }
           final Set<Artifact> artifacts = project.getArtifacts();
           final boolean wereNativesTargetDirectoriesMade = nativesTargetDir.mkdirs();
-          if(!wereNativesTargetDirectoriesMade) {
-              throw new MojoFailureException("Unable to create directories.");
-          }
+          /**
+           if (!wereNativesTargetDirectoriesMade && !nativesTargetDir.exists()) {
+           getLog().debug("Unable to create directories: " + nativesTargetDir.getAbsolutePath());
+           }
+           */
           getLog().debug(String.format("Using "));
           for (Artifact artifact : artifacts) {
               String classifier = artifact.getClassifier();
@@ -111,19 +105,35 @@ final class CopyNativesMojo extends AbstractMojo {
                   if (separateDirs) {
                       artifactDir = new File(nativesTargetDir, platform);
                       final boolean wereArtifactDirectoriesMade = artifactDir.mkdirs();
-                      if(!wereArtifactDirectoriesMade) {
-                          throw new MojoFailureException("Unable to create directories.");
-                      }
+                      /**
+                       if (!wereArtifactDirectoriesMade && !nativesTargetDir.exists()) {
+                       getLog().debug("Unable to create directories: " + nativesTargetDir.getAbsolutePath());
+                       }
+                       */
                   }
                   jarUnpacker.copyJarContent(artifact.getFile(), artifactDir);
               }
 
           }
           buildContext.refresh(nativesTargetDir);
-     } catch (SecurityException e) {
-          throw new MojoFailureException("SecurityException prevented copying of natives", e);
+      } catch (IOException e) {
+          try (final Writer sw = new StringWriter(); final Writer pw = new PrintWriter(sw)) {
+              e.printStackTrace((PrintWriter)pw);
+              throw new MojoFailureException("IllegalStateException prevented copying of natives: " + sw.toString(), e);
+          } catch (IOException ioe) {
+              throw new MojoFailureException("IOException prevented copying of natives: " + ioe.getLocalizedMessage(), e);
+          }
+      } catch (NullPointerException e) {
+          try (final Writer sw = new StringWriter(); final Writer pw = new PrintWriter(sw)) {
+              e.printStackTrace((PrintWriter)pw);
+              throw new MojoFailureException("NullPointerException prevented copying of natives: " + sw.toString(), e);
+          } catch (IOException ioe) {
+              throw new MojoFailureException("IOException prevented copying of natives: " + ioe.getLocalizedMessage(), e);
+          }
+      } catch (SecurityException e) {
+          throw new MojoFailureException("SecurityException prevented copying of natives.", e);
      }catch (Exception e) {
-          throw new MojoFailureException("Unable to copy natives", e);
+          throw new MojoFailureException("Exception prevented copying of natives: " + e.toString(), e);
     }
   }
 

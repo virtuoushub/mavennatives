@@ -16,61 +16,48 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.codehaus.plexus.component.annotations.Component;
 
 @Component(role = IJarUnpacker.class)
-public class JarUnpacker implements IJarUnpacker
-{
-  private static final Log log = new SystemStreamLog();
+public class JarUnpacker implements IJarUnpacker {
+    private static final Log log = new SystemStreamLog();
 
-  private static final List<String> IGNORED_FILES = new ArrayList<String>(){{ add("META-INF"); add("MANIFEST.MF"); }};
+    private static final List<String> IGNORED_FILES = new ArrayList<String>() {{
+        add("META-INF");
+        add("MANIFEST.MF");
+    }};
 
-  public void copyJarContent(File jarPath, File targetDir) throws IOException
-  {
-    log.info("Copying natives from " + jarPath.getName());
-    JarFile jar = new JarFile(jarPath);
+    public void copyJarContent(File jarPath, File targetDir) throws IOException {
+        log.info("Copying natives from " + jarPath.getName());
+        JarFile jar = new JarFile(jarPath);
 
-    Enumeration<JarEntry> entries = jar.entries();
-    while (entries.hasMoreElements())
-    {
-      final JarEntry file = entries.nextElement();
+        Enumeration<JarEntry> entries = jar.entries();
+        while (entries.hasMoreElements()) {
+            final JarEntry file = entries.nextElement();
 
-      final File f = new File(targetDir, file.getName());
-      if(!IGNORED_FILES.contains(f.getName())) {
-        log.info("Copying native - " + file.getName());
+            final File f = new File(targetDir, file.getName());
+            if (!IGNORED_FILES.contains(f.getName())) {
+                log.info("Copying native - " + file.getName());
 
-        final File parentFile = f.getParentFile();
-        final boolean wereParentFileDirectoriesMade = parentFile.mkdirs();
-          if(!wereParentFileDirectoriesMade) {
-              throw new IOException("Unable to create directories.");
-          }
+                final File parentFile = f.getParentFile();
+                if (!parentFile.exists()) {
+                    final boolean wereParentFileDirectoriesMade = parentFile.mkdirs();
+                    if (!wereParentFileDirectoriesMade) {
+                        throw new IOException("Unable to create directories.");
+                    }
+                }
 
-          if (file.isDirectory())
-        { // if its a directory, create it
-          final boolean wereFileDirectoriesMade = f.mkdir();
-            if(!wereFileDirectoriesMade) {
-                throw new IOException("Unable to create directories.");
+                if (file.isDirectory() && !f.exists()) { // if its a directory, create it
+                    final boolean wereFileDirectoriesMade = f.mkdir();
+                    if (!wereFileDirectoriesMade) {
+                        throw new IOException("Unable to create directories.");
+                    }
+                    continue;
+                }
+
+                try (InputStream is = jar.getInputStream(file);
+                     FileOutputStream fos = new FileOutputStream(f)) {
+                    IOUtils.copy(is, fos);
+                }
             }
-          continue;
         }
-
-        InputStream is = null;
-        FileOutputStream fos = null;
-
-        try
-        {
-          is = jar.getInputStream(file); // get the input stream
-          fos = new FileOutputStream(f);
-          IOUtils.copy(is, fos);
-        }
-        finally
-        {
-          if (fos != null)
-            fos.close();
-          if (is != null)
-            is.close();
-        }
-      }
-
     }
-
-  }
 
 }
