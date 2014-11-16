@@ -37,6 +37,7 @@ def assertExistsFile( file )
   return true
 }
 
+//noinspection GroovyAssignabilityCheck
 File target = new File( basedir, "target" )
 assert assertExistsDirectory( target )
 
