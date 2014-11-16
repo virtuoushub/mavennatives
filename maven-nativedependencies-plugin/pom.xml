@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.googlecode.mavennatives</groupId>
-  <artifactId>maven-nativedependencies-plugin</artifactId>
+  <groupId>com.colapietro.maven.plugins</groupId>
+  <artifactId>nativedependencies-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>0.0.8-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
   <name>Maven Native Dependencies Plugin</name>
   <description>This plugin allows the automatic unpacking of natives in jars depending on a classifier with a certain pattern</description>
-  <url>http://code.google.com/p/mavennatives/</url>
+  <url>https://github.com/virtuoushub/mavennatives/</url>
   <developers>
     <developer>
       <id>rgarat</id>
@@ -20,11 +20,20 @@
       <organization>Gemserk</organization>
       <url>http://blog.gemserk.com</url>
     </developer>
+    <developer>
+      <id>pc</id>
+      <email>petercolapietro@gmail.com</email>
+      <url>https://github.com/virtuoushub</url>
+    </developer>
   </developers>
 
+  <prerequisites>
+    <maven>${maven.minimum.version}</maven>
+  </prerequisites>
+
   <issueManagement>
-    <system>googlecode</system>
-    <url>http://code.google.com/p/mavennatives/issues/list</url>
+    <system>github</system>
+    <url>https://github.com/virtuoushub/mavennatives/issues</url>
   </issueManagement>
 
   <licenses>
@@ -36,10 +45,11 @@
   </licenses>
 
   <scm>
-    <url>https://mavennatives.googlecode.com/svn/trunk/maven-nativedependencies-plugin</url>
-    <connection>scm:svn:http://mavennatives.googlecode.com/svn/trunk/maven-nativedependencies-plugin</connection>
-    <developerConnection>scm:svn:https://mavennatives.googlecode.com/svn/trunk/maven-nativedependencies-plugin</developerConnection>
+    <url>https://github.com/virtuoushub/mavennatives</url>
+    <connection>scm:git:git://github.com/virtuoushub/mavennatives.git</connection>
+    <developerConnection>scm:git:git@github.com:virtuoushub/mavennatives.git</developerConnection>
   </scm>
+
   <distributionManagement>
     <snapshotRepository>
       <id>sonatype-nexus-snapshots</id>
@@ -57,26 +67,27 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>${maven-compiler-plugin.version}</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
           <encoding>${project.build.sourceEncoding}</encoding>
+          <useIncrementalCompilation>false</useIncrementalCompilation><!-- http://stackoverflow.com/a/17948010 -->
         </configuration>
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.5</version>
+        <version>${maven-resources-plugin.version}</version>
         <configuration>
           <encoding>${project.build.sourceEncoding}</encoding>
         </configuration>
       </plugin>
-      <plugin>
+        <plugin>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-component-metadata</artifactId>
-        <version>1.5.5</version>
+        <version>${plexus-component-metadata.version}</version>
         <executions>
           <execution>
             <id>process-classes</id>
@@ -95,16 +106,13 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>2.1.2</version>
+        <version>${maven-source-plugin.version}</version>
         <executions>
           <execution>
             <id>attach-sources</id>
             <goals>
               <goal>jar-no-fork</goal>
             </goals>
-            <configuration>
-              <encoding>${project.build.sourceEncoding}</encoding>
-            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -135,12 +143,53 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.1</version>
+          <version>${maven-release-plugin.version}</version>
           <configuration>
             <mavenExecutorId>forked-path</mavenExecutorId>
             <useReleaseProfile>false</useReleaseProfile>
             <arguments>-Pgpgsign,mavennativesgpg</arguments>
           </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven-dependency-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>${versions-maven-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>${maven-site-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>${maven-project-info-reports-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>${maven-clean-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>${maven-install-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>${maven-deploy-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${maven-jar-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>${maven-plugin-plugin.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -154,7 +203,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.1</version>
+            <version>${maven-gpg-plugin.version}</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
@@ -202,78 +251,96 @@
   </profiles>
 
   <properties>
-    <maven.version>2.0.10</maven.version>
+    <maven.minimum.version>2.2.1</maven.minimum.version>
+    <!--
+    <maven.version>3.2.3</maven.version>
+    -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jmock.version>2.6.0</jmock.version>
+    <maven-plugin-testing-harness.version>1.1</maven-plugin-testing-harness.version>
+    <maven-dependency-plugin.version>2.9</maven-dependency-plugin.version>
+    <versions-maven-plugin.version>2.1</versions-maven-plugin.version>
+    <maven-site-plugin.version>3.4</maven-site-plugin.version>
+    <maven-project-info-reports-plugin.version>2.7</maven-project-info-reports-plugin.version>
+    <commons-io.version>2.4</commons-io.version>
+    <junit.version>4.12-beta-3</junit.version>
+    <maven-project.version>3.0-alpha-2</maven-project.version>
+    <plexus-component-annotations.version>1.6</plexus-component-annotations.version>
+    <jmock-junit4.version>2.6.0-RC2</jmock-junit4.version>
+    <jmock-legacy.version>2.6.0-RC2</jmock-legacy.version>
     <java.version>1.8</java.version>
+    <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
+    <maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
+    <maven-release-plugin.version>2.5.1</maven-release-plugin.version>
+    <maven-resources-plugin.version>2.7</maven-resources-plugin.version>
+    <maven-source-plugin.version>2.4</maven-source-plugin.version>
+    <plexus-component-metadata.version>1.6</plexus-component-metadata.version>
+    <maven-clean-plugin.version>2.6.1</maven-clean-plugin.version>
+    <maven-install-plugin.version>2.5.2</maven-install-plugin.version>
+    <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+    <maven-jar-plugin.version>2.5</maven-jar-plugin.version>
+    <maven-surefire-plugin.version>2.18</maven-surefire-plugin.version>
+    <maven-plugin-plugin.version>3.3</maven-plugin-plugin.version>
+
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
-      <version>${maven.version}</version>
+      <version>${maven.minimum.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>${maven.version}</version>
+      <version>${maven.minimum.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
-      <version>${maven.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-model</artifactId>
-      <version>${maven.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
-      <version>${maven.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-common-artifact-filters</artifactId>
-      <version>1.0</version>
+      <version>${maven-project.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>1.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>3.0.4</version>
+      <version>${commons-io.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.6</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jmock</groupId>
       <artifactId>jmock-junit4</artifactId>
-      <version>2.5.1</version>
+      <version>${jmock-junit4.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jmock</groupId>
       <artifactId>jmock-legacy</artifactId>
-      <version>2.5.1</version>
+      <version>${jmock-legacy.version}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-component-annotations</artifactId>
-      <version>1.0-beta-3.0.5</version>
+      <version>${plexus-component-annotations.version}</version>
     </dependency>
     <dependency>
       <groupId>org.sonatype.plexus</groupId>
       <artifactId>plexus-build-api</artifactId>
       <version>0.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jmock</groupId>
+      <artifactId>jmock</artifactId>
+      <version>${jmock.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-plugin-testing-harness</artifactId>
+      <version>${maven-plugin-testing-harness.version}</version>
     </dependency>
   </dependencies>
 

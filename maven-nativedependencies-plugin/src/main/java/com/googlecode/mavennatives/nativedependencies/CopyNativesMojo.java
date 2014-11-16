@@ -36,25 +36,25 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * @requiresDependencyResolution test
  */
 public class CopyNativesMojo extends AbstractMojo {
-  /**
-   * POM
-   *
-   * @parameter expression="${project}"
-   * @readonly
-   * @required
-   */
-  private MavenProject project;
+	/**
+	 * POM
+	 * 
+	 * @parameter project="project"
+	 * @readonly
+	 * @required
+	 */
+	private MavenProject project;
 
-  /**
-   *
-   * @parameter expression="${nativesTargetDir}" default-value="${project.build.directory}/natives"
-   */
-  private File nativesTargetDir;
+	/**
+	 * 
+	 * @parameter nativesTargetDir="nativesTargetDir" default-value="${project.build.directory}/natives"
+	 */
+	private File nativesTargetDir;
 
-  /**
-   * @parameter expression="${separateDirs}" default-value="false"
-   */
-  private boolean separateDirs;
+	/**
+	 * @parameter separateDirs="separateDirs" default-value="false"
+	 */
+	private boolean separateDirs;
 
   /**
    * @parameter expression="${platforms}"
