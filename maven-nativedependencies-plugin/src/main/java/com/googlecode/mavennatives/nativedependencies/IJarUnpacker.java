@@ -3,7 +3,7 @@ package com.googlecode.mavennatives.nativedependencies;
 import java.io.File;
 import java.io.IOException;
 
-public interface IJarUnpacker
+interface IJarUnpacker
 {
 	String ROLE = IJarUnpacker.class.getName();
 	

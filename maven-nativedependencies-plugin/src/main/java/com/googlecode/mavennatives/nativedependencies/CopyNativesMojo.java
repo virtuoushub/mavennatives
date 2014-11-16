@@ -35,7 +35,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * @requiresProject true
  * @requiresDependencyResolution test
  */
-public class CopyNativesMojo extends AbstractMojo {
+final class CopyNativesMojo extends AbstractMojo {
 	/**
 	 * POM
 	 * 
