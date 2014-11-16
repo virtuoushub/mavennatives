@@ -4,11 +4,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.colapietro.maven.plugins.it001</groupId>
-	<artifactId>nativedependencies-it001</artifactId>
+	<groupId>com.colapietro.maven.plugins.first-it</groupId>
+	<artifactId>nativedependencies-maven-plugin-first-it</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>NativeDependencies it001</name>
+	<name>NativeDependencies First Itegration Test</name>
 	<description>Tests that provided native dependencies are used</description>
 
   <properties>
@@ -20,7 +20,7 @@
 			<plugin>
 				<groupId>com.colapietro.maven.plugins</groupId>
 				<artifactId>nativedependencies-maven-plugin</artifactId>
-				<version>${project.version}</version>
+        <version>@project.version@</version>
 				<executions>
 					<execution>
 						<id>unpacknatives</id>
@@ -34,22 +34,12 @@
 		</plugins>
 	</build>
 
-
 	<dependencies>
 		<dependency>
 			<groupId>org.lwjgl.lwjgl</groupId>
 			<artifactId>lwjgl</artifactId>
 			<version>${lwjgl.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.lwjgl.lwjgl</groupId>
-			<artifactId>lwjgl-platform</artifactId>
-			<version>${lwjgl.version}</version>
-			<classifier>natives-linux</classifier>
-			<scope>provided</scope>
-		</dependency>
 	</dependencies>
-
-
 
 </project>
