@@ -9,6 +9,8 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.project.MavenProject;
 import org.jmock.Expectations;
@@ -34,8 +36,10 @@ public class CopyNativesMojoTest
 	private MavenProject mavenProject;
 	private File nativesTargetDir;
 	private ArtifactStubFactory artifactFactory;
-	
-	@Before
+    private static final Log LOG = new SystemStreamLog();
+
+
+    @Before
 	public void setUp()
 	{
 		mojo = new CopyNativesMojo();
@@ -53,14 +57,14 @@ public class CopyNativesMojoTest
 	@Test
 	public void executeWithoutDependenciesOnlyCreatesTheNativesDir() throws MojoExecutionException, MojoFailureException
 	{
-		final Set<Artifact> artifacts = new HashSet<Artifact>();
+		final Set<Artifact> artifacts = new HashSet<>();
 			
 		context.checking(new Expectations()
 		{
 			{
                 final boolean mkdirs = oneOf(nativesTargetDir).mkdirs();
                 if(!mkdirs) {
-                    throw new MojoFailureException("Unable to make directories.");
+                    LOG.debug(String.valueOf(mkdirs));
                 }
                 oneOf(mavenProject).getArtifacts();will(returnValue(artifacts));
 			}
@@ -73,7 +77,7 @@ public class CopyNativesMojoTest
 	@Test
 	public void executeWithoutNativeDependenciesOnlyCreatesTheNativesDir() throws MojoExecutionException, MojoFailureException, IOException
 	{
-		final Set<Artifact> artifacts = new HashSet<Artifact>();
+		final Set<Artifact> artifacts = new HashSet<>();
 			
 		artifacts.add(artifactFactory.createArtifact("groupid1","artifactid1","1.0"));
 		artifacts.add(artifactFactory.createArtifact("groupid2","artifactid2","2.0"));
@@ -85,7 +89,7 @@ public class CopyNativesMojoTest
 			{
                 final boolean mkdirs = oneOf(nativesTargetDir).mkdirs();
                 if(!mkdirs) {
-                    throw new MojoFailureException("Unable to make directories.");
+                    LOG.debug(String.valueOf(mkdirs));
                 }
 				oneOf(mavenProject).getArtifacts();will(returnValue(artifacts));
 			}
@@ -97,7 +101,7 @@ public class CopyNativesMojoTest
 	@Test
 	public void executeWithOneNativeDependenciesCallsTheUnpacker() throws MojoExecutionException, MojoFailureException, IOException
 	{
-		final Set<Artifact> artifacts = new HashSet<Artifact>();
+		final Set<Artifact> artifacts = new HashSet<>();
 			
 		artifacts.add(artifactFactory.createArtifact("groupid1","artifactid1","1.0"));
 		Artifact nativeArtifact = artifactFactory.createArtifact("groupid2","artifactid2","2.0","compile","jar","natives-windows");
@@ -113,7 +117,7 @@ public class CopyNativesMojoTest
 			{
                 final boolean mkdirs = oneOf(nativesTargetDir).mkdirs();
                 if(!mkdirs) {
-                    throw new MojoFailureException("Unable to make directories.");
+                    LOG.debug(String.valueOf(mkdirs));
                 }
                 oneOf(mavenProject).getArtifacts();will(returnValue(artifacts));
 				oneOf(jarUnpacker).copyJarContent(nativeFile, nativesTargetDir);
@@ -127,7 +131,7 @@ public class CopyNativesMojoTest
 	public void executeWithPlatformsSpecifiedNativeDependenciesCallsTheUnpacker() throws MojoExecutionException, MojoFailureException, IOException
 	{
 		mojo.setPlatforms(Arrays.asList("windows", "linux"));
-		final Set<Artifact> artifacts = new HashSet<Artifact>();
+		final Set<Artifact> artifacts = new HashSet<>();
 			
 		artifacts.add(artifactFactory.createArtifact("groupid1","artifactid1","1.0"));
 		Artifact nativeArtifact = artifactFactory.createArtifact("groupid2","artifactid2","2.0","compile","jar","natives-windows");
@@ -152,7 +156,7 @@ public class CopyNativesMojoTest
 			{
                 final boolean mkdirs = oneOf(nativesTargetDir).mkdirs();
                 if(!mkdirs) {
-                    throw new MojoFailureException("Unable to make directories.");
+                    LOG.debug(String.valueOf(mkdirs));
                 }
                 oneOf(mavenProject).getArtifacts();will(returnValue(artifacts));
 				oneOf(jarUnpacker).copyJarContent(nativeFile, nativesTargetDir);
