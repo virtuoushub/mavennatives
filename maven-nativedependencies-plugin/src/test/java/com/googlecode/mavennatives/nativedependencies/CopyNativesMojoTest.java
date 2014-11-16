@@ -23,7 +23,7 @@ import org.sonatype.plexus.build.incremental.DefaultBuildContext;
 @RunWith(JMock.class)
 public class CopyNativesMojoTest
 {
-	Mockery context = new Mockery()
+	private final Mockery context = new Mockery()
 	{
 		{
 			setImposteriser(ClassImposteriser.INSTANCE);

@@ -18,7 +18,7 @@ import org.codehaus.plexus.component.annotations.Component;
 @Component(role = IJarUnpacker.class)
 public class JarUnpacker implements IJarUnpacker
 {
-  private Log log = new SystemStreamLog();
+  private static final Log log = new SystemStreamLog();
 
   private static final List<String> IGNORED_FILES = new ArrayList<String>(){{ add("META-INF"); add("MANIFEST.MF"); }};
 
