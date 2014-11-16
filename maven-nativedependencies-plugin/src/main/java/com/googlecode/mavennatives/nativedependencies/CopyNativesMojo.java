@@ -71,7 +71,6 @@ final class CopyNativesMojo extends AbstractMojo {
    * @throws MojoFailureException
    *
    */
-  @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException, MojoFailureException {
       try {
           getLog().info("Saving natives in " + nativesTargetDir);
@@ -84,6 +83,7 @@ final class CopyNativesMojo extends AbstractMojo {
           } else {
               getLog().info("Copying all platforms.");
           }
+          @SuppressWarnings("unchecked")
           final Set<Artifact> artifacts = project.getArtifacts();
           final boolean wereNativesTargetDirectoriesMade = nativesTargetDir.mkdirs();
           /**
