@@ -252,9 +252,7 @@
 
   <properties>
     <maven.minimum.version>2.2.1</maven.minimum.version>
-    <!--
-    <maven.version>3.2.3</maven.version>
-    -->
+    <maven.latest.version>3.2.3</maven.latest.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jmock.version>2.6.0</jmock.version>
     <maven-plugin-testing-harness.version>1.1</maven-plugin-testing-harness.version>
@@ -288,12 +286,12 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
-      <version>${maven.minimum.version}</version>
+      <version>${maven.latest.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>${maven.minimum.version}</version>
+      <version>${maven.latest.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
