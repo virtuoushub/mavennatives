@@ -71,6 +71,15 @@ public class CopyNativesMojo extends AbstractMojo {
    * */
   private BuildContext buildContext;
 
+  /**
+   *
+   * Type erasure in <code>final Set<Artifact> artifacts = project.getArtifacts();</code> is the reasons for @SuppressWarnings("unchecked")
+   *
+   * @throws MojoExecutionException
+   * @throws MojoFailureException
+   *
+   */
+  @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException, MojoFailureException {
     try {
       getLog().info("Saving natives in " + nativesTargetDir);
