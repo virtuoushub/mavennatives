@@ -71,7 +71,8 @@
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
-					<encoding>${project.build.sourceEncoding}</encoding>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <useIncrementalCompilation>false</useIncrementalCompilation><!-- http://stackoverflow.com/a/17948010 -->
         </configuration>
       </plugin>
 
