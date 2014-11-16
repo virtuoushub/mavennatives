@@ -248,6 +248,40 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>developer</id>
+      <build>
+          <plugins>
+            <plugin>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>${maven-compiler-plugin.version}</version>
+              <configuration combine.self="append">
+                <compilerArgs>
+                  <arg>-Xlint:unchecked</arg>
+                </compilerArgs>
+              </configuration>
+            </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>jdk6-developer</id>
+      <build>
+          <plugins>
+            <plugin>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>${maven-compiler-plugin.version}</version>
+              <configuration combine.self="append">
+                <source>${java.minimum.version}</source>
+                <target>${java.minimum.version}</target>
+                <compilerArgs>
+                  <arg>-Xlint:unchecked</arg>
+                </compilerArgs>
+              </configuration>
+            </plugin>
+          </plugins>
+      </build>
+    </profile>
   </profiles>
 
   <properties>
@@ -267,6 +301,7 @@
     <jmock-junit4.version>2.6.0-RC2</jmock-junit4.version>
     <jmock-legacy.version>2.6.0-RC2</jmock-legacy.version>
     <java.version>1.8</java.version>
+    <java.minimum.version>1.6</java.minimum.version>
     <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
     <maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
     <maven-release-plugin.version>2.5.1</maven-release-plugin.version>
