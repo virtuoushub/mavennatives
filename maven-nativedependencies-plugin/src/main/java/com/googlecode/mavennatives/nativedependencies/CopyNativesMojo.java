@@ -38,7 +38,7 @@ public class CopyNativesMojo extends AbstractMojo {
 	/**
 	 * POM
 	 * 
-	 * @parameter expression="${project}"
+	 * @parameter project="project"
 	 * @readonly
 	 * @required
 	 */
@@ -46,12 +46,12 @@ public class CopyNativesMojo extends AbstractMojo {
 
 	/**
 	 * 
-	 * @parameter expression="${nativesTargetDir}" default-value="${project.build.directory}/natives"
+	 * @parameter nativesTargetDir="nativesTargetDir" default-value="${project.build.directory}/natives"
 	 */
 	private File nativesTargetDir;
 
 	/**
-	 * @parameter expression="${separateDirs}" default-value="false"
+	 * @parameter separateDirs="separateDirs" default-value="false"
 	 */
 	private boolean separateDirs;
 
