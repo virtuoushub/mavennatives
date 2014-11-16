@@ -58,8 +58,11 @@ public class CopyNativesMojoTest
 		context.checking(new Expectations()
 		{
 			{
-				oneOf(nativesTargetDir).mkdirs();
-				oneOf(mavenProject).getArtifacts();will(returnValue(artifacts));
+                final boolean mkdirs = oneOf(nativesTargetDir).mkdirs();
+                if(!mkdirs) {
+                    throw new MojoFailureException("Unable to make directories.");
+                }
+                oneOf(mavenProject).getArtifacts();will(returnValue(artifacts));
 			}
 		});
 		
@@ -80,7 +83,10 @@ public class CopyNativesMojoTest
 		context.checking(new Expectations()
 		{
 			{
-				oneOf(nativesTargetDir).mkdirs();
+                final boolean mkdirs = oneOf(nativesTargetDir).mkdirs();
+                if(!mkdirs) {
+                    throw new MojoFailureException("Unable to make directories.");
+                }
 				oneOf(mavenProject).getArtifacts();will(returnValue(artifacts));
 			}
 		});
@@ -105,8 +111,11 @@ public class CopyNativesMojoTest
 		context.checking(new Expectations()
 		{
 			{
-				oneOf(nativesTargetDir).mkdirs();
-				oneOf(mavenProject).getArtifacts();will(returnValue(artifacts));
+                final boolean mkdirs = oneOf(nativesTargetDir).mkdirs();
+                if(!mkdirs) {
+                    throw new MojoFailureException("Unable to make directories.");
+                }
+                oneOf(mavenProject).getArtifacts();will(returnValue(artifacts));
 				oneOf(jarUnpacker).copyJarContent(nativeFile, nativesTargetDir);
 			}
 		});
@@ -141,8 +150,11 @@ public class CopyNativesMojoTest
 		context.checking(new Expectations()
 		{
 			{
-				oneOf(nativesTargetDir).mkdirs();
-				oneOf(mavenProject).getArtifacts();will(returnValue(artifacts));
+                final boolean mkdirs = oneOf(nativesTargetDir).mkdirs();
+                if(!mkdirs) {
+                    throw new MojoFailureException("Unable to make directories.");
+                }
+                oneOf(mavenProject).getArtifacts();will(returnValue(artifacts));
 				oneOf(jarUnpacker).copyJarContent(nativeFile, nativesTargetDir);
 				oneOf(jarUnpacker).copyJarContent(nativeFile3, nativesTargetDir);
 			}

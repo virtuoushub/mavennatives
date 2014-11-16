@@ -37,11 +37,17 @@ public class JarUnpacker implements IJarUnpacker
         log.info("Copying native - " + file.getName());
 
         final File parentFile = f.getParentFile();
-        parentFile.mkdirs();
+        final boolean wereParentFileDirectoriesMade = parentFile.mkdirs();
+          if(!wereParentFileDirectoriesMade) {
+              throw new IOException("Unable to create directories.");
+          }
 
-        if (file.isDirectory())
+          if (file.isDirectory())
         { // if its a directory, create it
-          f.mkdir();
+          final boolean wereFileDirectoriesMade = f.mkdir();
+            if(!wereFileDirectoriesMade) {
+                throw new IOException("Unable to create directories.");
+            }
           continue;
         }
 

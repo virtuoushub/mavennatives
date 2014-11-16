@@ -81,41 +81,49 @@ final class CopyNativesMojo extends AbstractMojo {
    */
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException, MojoFailureException {
-    try {
-      getLog().info("Saving natives in " + nativesTargetDir);
-      if (separateDirs) {
-        getLog().info("Storing artifacts in separate dirs according to classifier");
-      }
-      final boolean platformsActive = platforms != null && (!platforms.isEmpty());
-      if (platformsActive) {
-        getLog().info(String.format("Only copying the following platforms: %s", platforms));
-      } else {
-        getLog().info("Copying all platforms.");
-      }
-      final Set<Artifact> artifacts = project.getArtifacts();
-      nativesTargetDir.mkdirs();
-      getLog().debug(String.format("Using "));
-      for (Artifact artifact : artifacts) {
-        String classifier = artifact.getClassifier();
-        if (classifier != null && classifier.startsWith("natives-")) {
-          String platform = classifier.substring("natives-".length());
-          if (platformsActive && (!platforms.contains(platform))) {
-            getLog().debug(String.format("Skipping other platform: G:%s - A:%s - C:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier()));
-            continue;
-          }
-          getLog().info(String.format("G:%s - A:%s - C:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier()));
-          File artifactDir = nativesTargetDir;
+      try {
+          getLog().info("Saving natives in " + nativesTargetDir);
           if (separateDirs) {
-            artifactDir = new File(nativesTargetDir, platform);
-            artifactDir.mkdirs();
+              getLog().info("Storing artifacts in separate dirs according to classifier");
           }
-          jarUnpacker.copyJarContent(artifact.getFile(), artifactDir);
-        }
+          final boolean platformsActive = platforms != null && (!platforms.isEmpty());
+          if (platformsActive) {
+              getLog().info(String.format("Only copying the following platforms: %s", platforms));
+          } else {
+              getLog().info("Copying all platforms.");
+          }
+          final Set<Artifact> artifacts = project.getArtifacts();
+          final boolean wereNativesTargetDirectoriesMade = nativesTargetDir.mkdirs();
+          if(!wereNativesTargetDirectoriesMade) {
+              throw new MojoFailureException("Unable to create directories.");
+          }
+          getLog().debug(String.format("Using "));
+          for (Artifact artifact : artifacts) {
+              String classifier = artifact.getClassifier();
+              if (classifier != null && classifier.startsWith("natives-")) {
+                  String platform = classifier.substring("natives-".length());
+                  if (platformsActive && (!platforms.contains(platform))) {
+                      getLog().debug(String.format("Skipping other platform: G:%s - A:%s - C:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier()));
+                      continue;
+                  }
+                  getLog().info(String.format("G:%s - A:%s - C:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier()));
+                  File artifactDir = nativesTargetDir;
+                  if (separateDirs) {
+                      artifactDir = new File(nativesTargetDir, platform);
+                      final boolean wereArtifactDirectoriesMade = artifactDir.mkdirs();
+                      if(!wereArtifactDirectoriesMade) {
+                          throw new MojoFailureException("Unable to create directories.");
+                      }
+                  }
+                  jarUnpacker.copyJarContent(artifact.getFile(), artifactDir);
+              }
 
-      }
-      buildContext.refresh(nativesTargetDir);
-    } catch (Exception e) {
-      throw new MojoFailureException("Unable to copy natives", e);
+          }
+          buildContext.refresh(nativesTargetDir);
+     } catch (SecurityException e) {
+          throw new MojoFailureException("SecurityException prevented copying of natives", e);
+     }catch (Exception e) {
+          throw new MojoFailureException("Unable to copy natives", e);
     }
   }
 
