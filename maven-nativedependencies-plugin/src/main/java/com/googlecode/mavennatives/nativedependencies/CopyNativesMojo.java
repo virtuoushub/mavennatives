@@ -36,128 +36,121 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 @Mojo(name = "copy", requiresProject = true, requiresDependencyResolution = ResolutionScope.TEST, defaultPhase = LifecyclePhase.PACKAGE)
 final class CopyNativesMojo extends AbstractMojo {
 
-    @Parameter( defaultValue = "${project}", readonly = true, required = true)
-	private MavenProject project;
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    private MavenProject project;
 
     @Parameter(defaultValue = "${project.build.directory}/natives")
-	private File nativesTargetDir;
+    private File nativesTargetDir;
 
     @Parameter(defaultValue = "false")
-	private boolean separateDirs;
+    private boolean separateDirs;
 
-  @Parameter
-  private List<String> platforms;
+    @Parameter
+    private List<String> platforms;
 
-  /**
-   * @component
-   */
-  @Component
-  private IJarUnpacker jarUnpacker;
+    /**
+     * @component
+     */
+    @Component
+    private IJarUnpacker jarUnpacker;
 
-  /**
-   * @component
-   */
-  @Component
-  private BuildContext buildContext;
+    /**
+     * @component
+     */
+    @Component
+    private BuildContext buildContext;
 
-  private static final Log LOG = new SystemStreamLog();
+    private static final Log LOG = new SystemStreamLog();
 
 
     /**
-   *
-   * Type erasure in <code>final Set<Artifact> artifacts = project.getArtifacts();</code> is the reasons for @SuppressWarnings("unchecked")
-   *
-   * @throws MojoExecutionException
-   * @throws MojoFailureException
-   *
-   */
-  public void execute() throws MojoExecutionException, MojoFailureException {
-      try {
-          getLog().info("Saving natives in " + nativesTargetDir);
-          if (separateDirs) {
-              getLog().info("Storing artifacts in separate dirs according to classifier");
-          }
-          final boolean platformsActive = platforms != null && (!platforms.isEmpty());
-          if (platformsActive) {
-              getLog().info(String.format("Only copying the following platforms: %s", platforms));
-          } else {
-              getLog().info("Copying all platforms.");
-          }
-          @SuppressWarnings("unchecked")
-          final Set<Artifact> artifacts = project.getArtifacts();
-          final boolean wereNativesTargetDirectoriesMade = nativesTargetDir.mkdirs();
-          /**
-           if (!wereNativesTargetDirectoriesMade && !nativesTargetDir.exists()) {
-           getLog().debug("Unable to create directories: " + nativesTargetDir.getAbsolutePath());
-           }
-           */
-          getLog().debug(String.format("Using "));
-          for (Artifact artifact : artifacts) {
-              String classifier = artifact.getClassifier();
-              if (classifier != null && classifier.startsWith("natives-")) {
-                  String platform = classifier.substring("natives-".length());
-                  if (platformsActive && (!platforms.contains(platform))) {
-                      getLog().debug(String.format("Skipping other platform: G:%s - A:%s - C:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier()));
-                      continue;
-                  }
-                  getLog().info(String.format("G:%s - A:%s - C:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier()));
-                  File artifactDir = nativesTargetDir;
-                  if (separateDirs) {
-                      artifactDir = new File(nativesTargetDir, platform);
-                      final boolean wereArtifactDirectoriesMade = artifactDir.mkdirs();
-                      /**
-                       if (!wereArtifactDirectoriesMade && !nativesTargetDir.exists()) {
-                       getLog().debug("Unable to create directories: " + nativesTargetDir.getAbsolutePath());
-                       }
-                       */
-                  }
-                  jarUnpacker.copyJarContent(artifact.getFile(), artifactDir);
-              }
+     * Type erasure in <code>final Set<Artifact> artifacts = project.getArtifacts();</code> is the reasons for @SuppressWarnings("unchecked")
+     *
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        try {
+            getLog().info("Saving natives in " + nativesTargetDir);
+            if (separateDirs) {
+                getLog().info("Storing artifacts in separate dirs according to classifier");
+            }
+            final boolean platformsActive = platforms != null && (!platforms.isEmpty());
+            if (platformsActive) {
+                getLog().info(String.format("Only copying the following platforms: %s", platforms));
+            } else {
+                getLog().info("Copying all platforms.");
+            }
+            @SuppressWarnings("unchecked")
+            final Set<Artifact> artifacts = project.getArtifacts();
+            final boolean wereNativesTargetDirectoriesMade = nativesTargetDir.mkdirs();
+            if (!wereNativesTargetDirectoriesMade) {
+                getLog().info("Unable to create directories(may already have existed): " + nativesTargetDir);
+            }
+            for (Artifact artifact : artifacts) {
+                String classifier = artifact.getClassifier();
+                if (classifier != null && classifier.startsWith("natives-")) {
+                    String platform = classifier.substring("natives-".length());
+                    if (platformsActive && (!platforms.contains(platform))) {
+                        getLog().info(String.format("Skipping other platform: G:%s - A:%s - C:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier()));
+                        continue;
+                    }
+                    getLog().info(String.format("G:%s - A:%s - C:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier()));
+                    File artifactDir = nativesTargetDir;
+                    if (separateDirs) {
+                        artifactDir = new File(nativesTargetDir, platform);
+                        final boolean wereArtifactDirectoriesMade = artifactDir.mkdirs();
+                        if (!wereArtifactDirectoriesMade) {
+                            getLog().info("Unable to create directories(may already have existed): " + nativesTargetDir);
+                        }
+                    }
+                    jarUnpacker.copyJarContent(artifact.getFile(), artifactDir);
+                }
 
-          }
-          buildContext.refresh(nativesTargetDir);
-      } catch (IOException e) {
-          try (final Writer sw = new StringWriter(); final Writer pw = new PrintWriter(sw)) {
-              e.printStackTrace((PrintWriter)pw);
-              throw new MojoFailureException("IllegalStateException prevented copying of natives: " + sw.toString(), e);
-          } catch (IOException ioe) {
-              throw new MojoFailureException("IOException prevented copying of natives: " + ioe.getLocalizedMessage(), e);
-          }
-      } catch (NullPointerException e) {
-          try (final Writer sw = new StringWriter(); final Writer pw = new PrintWriter(sw)) {
-              e.printStackTrace((PrintWriter)pw);
-              throw new MojoFailureException("NullPointerException prevented copying of natives: " + sw.toString(), e);
-          } catch (IOException ioe) {
-              throw new MojoFailureException("IOException prevented copying of natives: " + ioe.getLocalizedMessage(), e);
-          }
-      } catch (SecurityException e) {
-          throw new MojoFailureException("SecurityException prevented copying of natives.", e);
-     }catch (Exception e) {
-          throw new MojoFailureException("Exception prevented copying of natives: " + e.toString(), e);
+            }
+            buildContext.refresh(nativesTargetDir);
+        } catch (IOException e) {
+            try (final Writer sw = new StringWriter(); final Writer pw = new PrintWriter(sw)) {
+                e.printStackTrace((PrintWriter) pw);
+                throw new MojoFailureException("IllegalStateException prevented copying of natives: " + sw.toString(), e);
+            } catch (IOException ioe) {
+                throw new MojoFailureException("IOException prevented copying of natives: " + ioe.getLocalizedMessage(), e);
+            }
+        } catch (NullPointerException e) {
+            try (final Writer sw = new StringWriter(); final Writer pw = new PrintWriter(sw)) {
+                e.printStackTrace((PrintWriter) pw);
+                throw new MojoFailureException("NullPointerException prevented copying of natives: " + sw.toString(), e);
+            } catch (IOException ioe) {
+                throw new MojoFailureException("IOException prevented copying of natives: " + ioe.getLocalizedMessage(), e);
+            }
+        } catch (SecurityException e) {
+            throw new MojoFailureException("SecurityException prevented copying of natives.", e);
+        } catch (Exception e) {
+            throw new MojoFailureException("Exception prevented copying of natives: " + e.toString(), e);
+        }
     }
-  }
 
-  public void setMavenProject(MavenProject mavenProject) {
-    this.project = mavenProject;
-  }
+    public void setMavenProject(MavenProject mavenProject) {
+        this.project = mavenProject;
+    }
 
-  public void setNativesTargetDir(File nativesTargetDir2) {
-    this.nativesTargetDir = nativesTargetDir2;
-  }
+    public void setNativesTargetDir(File nativesTargetDir2) {
+        this.nativesTargetDir = nativesTargetDir2;
+    }
 
-  public void setJarUnpacker(IJarUnpacker jarUnpacker) {
-    this.jarUnpacker = jarUnpacker;
-  }
+    public void setJarUnpacker(IJarUnpacker jarUnpacker) {
+        this.jarUnpacker = jarUnpacker;
+    }
 
-  public void setBuildContext(BuildContext buildContext) {
-    this.buildContext = buildContext;
-  }
+    public void setBuildContext(BuildContext buildContext) {
+        this.buildContext = buildContext;
+    }
 
-  public List<String> getPlatforms() {
-    return platforms;
-  }
+    public List<String> getPlatforms() {
+        return platforms;
+    }
 
-  public void setPlatforms(List<String> platforms) {
-    this.platforms = platforms;
-  }
+    public void setPlatforms(List<String> platforms) {
+        this.platforms = platforms;
+    }
 }
