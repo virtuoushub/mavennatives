@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.colapietro.maven.plugins.first-it</groupId>
+	<groupId>org.colapietro.maven.plugins.first-it</groupId>
 	<artifactId>nativedependencies-maven-plugin-first-it</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -18,7 +18,7 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>com.colapietro.maven.plugins</groupId>
+				<groupId>org.colapietro.maven.plugins</groupId>
 				<artifactId>nativedependencies-maven-plugin</artifactId>
         <version>@project.version@</version>
 				<executions>
