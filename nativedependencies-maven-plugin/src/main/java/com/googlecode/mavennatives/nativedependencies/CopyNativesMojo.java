@@ -69,6 +69,7 @@ final class CopyNativesMojo extends AbstractMojo {
      * @throws MojoExecutionException
      * @throws MojoFailureException
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
             getLog().info("Saving natives in " + nativesTargetDir);
