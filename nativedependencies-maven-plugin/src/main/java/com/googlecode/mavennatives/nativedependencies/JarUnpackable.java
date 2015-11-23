@@ -7,5 +7,5 @@ interface JarUnpackable {
 
 	String ROLE = JarUnpackable.class.getName();
 	
-	public void copyJarContent(File jarPath, File targetDir) throws IOException;
+	void copyJarContent(File jarPath, File targetDir) throws IOException;
 }
