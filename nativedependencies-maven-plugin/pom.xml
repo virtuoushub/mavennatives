@@ -128,8 +128,6 @@
               <goal>jar</goal>
             </goals>
             <configuration>
-              <!-- TODO fix Javadocs so linter does not complain. -->
-              <additionalparam>-Xdoclint:none</additionalparam>
               <encoding>${project.build.sourceEncoding}</encoding>
             </configuration>
           </execution>
