@@ -320,8 +320,8 @@
     <plexus-component-annotations.version>1.6</plexus-component-annotations.version>
     <jmock-junit4.version>2.6.0-RC2</jmock-junit4.version>
     <jmock-legacy.version>2.6.0-RC2</jmock-legacy.version>
-    <java.version>1.8</java.version>
     <java.minimum.version>1.7</java.minimum.version>
+    <java.version>${java.minimum.version}</java.version>
     <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
     <maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
     <maven-release-plugin.version>2.5.1</maven-release-plugin.version>
