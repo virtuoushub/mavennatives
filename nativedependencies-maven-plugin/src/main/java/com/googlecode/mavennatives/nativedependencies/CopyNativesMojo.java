@@ -52,7 +52,7 @@ final class CopyNativesMojo extends AbstractMojo {
      * @component
      */
     @Component
-    private IJarUnpacker jarUnpacker;
+    private JarUnpackable jarUnpacker;
 
     /**
      * @component
@@ -138,7 +138,7 @@ final class CopyNativesMojo extends AbstractMojo {
         this.nativesTargetDir = nativesTargetDir2;
     }
 
-    public void setJarUnpacker(IJarUnpacker jarUnpacker) {
+    public void setJarUnpacker(JarUnpackable jarUnpacker) {
         this.jarUnpacker = jarUnpacker;
     }
 

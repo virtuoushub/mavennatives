@@ -32,7 +32,7 @@ public class CopyNativesMojoTest
 		}
 	};
 	private CopyNativesMojo mojo;
-	private IJarUnpacker jarUnpacker;
+	private JarUnpackable jarUnpacker;
 	private MavenProject mavenProject;
 	private File nativesTargetDir;
 	private ArtifactStubFactory artifactFactory;
@@ -45,7 +45,7 @@ public class CopyNativesMojoTest
 		mojo = new CopyNativesMojo();
 		mavenProject = context.mock(MavenProject.class);
 		mojo.setMavenProject(mavenProject);
-		jarUnpacker = context.mock(IJarUnpacker.class);
+		jarUnpacker = context.mock(JarUnpackable.class);
 		mojo.setJarUnpacker(jarUnpacker);
 		nativesTargetDir = context.mock(File.class);
 		mojo.setNativesTargetDir(nativesTargetDir);

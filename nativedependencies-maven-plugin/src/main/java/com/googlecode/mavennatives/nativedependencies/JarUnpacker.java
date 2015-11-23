@@ -15,8 +15,8 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.codehaus.plexus.component.annotations.Component;
 
-@Component(role = IJarUnpacker.class)
-public class JarUnpacker implements IJarUnpacker {
+@Component(role = JarUnpackable.class)
+public class JarUnpacker implements JarUnpackable {
     private static final Log log = new SystemStreamLog();
 
     private static final List<String> IGNORED_FILES = new ArrayList<String>() {{
