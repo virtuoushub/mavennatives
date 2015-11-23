@@ -28,7 +28,7 @@ public class JarUnpacker implements JarUnpackable {
         log.info("Copying natives from " + jarPath.getName());
         JarFile jar = new JarFile(jarPath);
 
-        Enumeration<JarEntry> entries = jar.entries();
+        final Enumeration<JarEntry> entries = jar.entries();
         while (entries.hasMoreElements()) {
             final JarEntry file = entries.nextElement();
 
