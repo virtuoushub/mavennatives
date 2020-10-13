@@ -313,7 +313,7 @@
     <maven-site-plugin.version>3.4</maven-site-plugin.version>
     <maven-project-info-reports-plugin.version>2.7</maven-project-info-reports-plugin.version>
     <commons-io.version>2.4</commons-io.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <maven-project.version>3.0-alpha-2</maven-project.version>
     <plexus-component-annotations.version>1.6</plexus-component-annotations.version>
     <jmock-junit4.version>2.6.0-RC2</jmock-junit4.version>
